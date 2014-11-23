@@ -33,7 +33,7 @@ PreGTD$pop <- as.numeric(PreGTD$pop)
 PreGTD$CUC.dist.km <- as.numeric(PreGTD$CUC.dist.km)
 PreGTD$iyear <- as.numeric(PreGTD$iyear)
 PreGTD$capital <- as.numeric(PreGTD$capital)
-PreGTD$coastalMC <- as.numeric(PreGTD$coastalMC)
+PreGTD$costalMC <- as.numeric(PreGTD$costalMC)
 PreGTD$Extra.WAR.In <- as.numeric(PreGTD$Extra.WAR.In)
 PreGTD$Extra.WAR.Out <- as.numeric(PreGTD$Extra.WAR.Out)
 PreGTD$Intra.WAR <- as.numeric(PreGTD$Intra.WAR)
@@ -41,7 +41,6 @@ PreGTD$Inter.WAR <- as.numeric(PreGTD$Inter.WAR)
 
 # take a look at the structure of our data, make sure we have numerics
 str(PreGTD)
-view(PreGTD)
 
 # start to put together tables--this is a test
 library(stargazer)
@@ -89,9 +88,9 @@ PreGTD.light$mcity.high <- (PreGTD.light$pop > 100000)
 m20 <- glm(mcity.high ~ pop, family=binomial(link="logit"), data=PreGTD.light)
 
 #try an output table and rename the variables for the table
-stargazer(m1, m2, m3, m4,m5, m6, m7, m8,m9, m10, m11, m12,m13, m14, m15, m16,m17, m18, m19, m20, title="Urban Correlation Matrix", type="html",dep.var.labels=c("Time","Megacity Attack Rating=1"),covariate.labels=c("Distance From Closest Urban Center","Population","Capital", "Property Scale","People Killed Scale", "Population in the largest city (% of urban population)","Population in urban agglomerations of more than 1 million","Population in urban agglomerations of more than 1 million (% of total population)","Urban population growth (annual %)","Urban population", "Urban population (% of total)","Population density (people per sq. km of land area)","Rural population density (rural population per sq. km of arable land)","Rural population", "Rural population growth (annual %)","Rural population (% of total population)", out="models2.html"))
+stargazer(m1, m2, m3, m4,m5, m6, m7, m8,m9, m10, m11, m12,m13, m14, m15, m16,m17, m18, m19, m20, title="Urban Correlation Matrix", type="text",dep.var.labels=c("Time","Megacity Attack Rating=1"),covariate.labels=c("Distance From Closest Urban Center","Population","Capital", "Property Scale","People Killed Scale", "Population in the largest city (% of urban population)","Population in urban agglomerations of more than 1 million","Population in urban agglomerations of more than 1 million (% of total population)","Urban population growth (annual %)","Urban population", "Urban population (% of total)","Population density (people per sq. km of land area)","Rural population density (rural population per sq. km of arable land)","Rural population", "Rural population growth (annual %)","Rural population (% of total population)", "During War Time", "During Peace time", "Civil War", "Between Country War", out="models2.txt"))
 
-          
+
 # this is a non output table           
 cor(PreGTD)
 as.matrix(cor(PreGTD.light))
@@ -109,5 +108,37 @@ PreGTD[index, ]
 testpregtd.orderhum<- order(testpregtd$HUMscale, testpregtd$merge, decreasing=TRUE)
 testpregtd.orderhum
 
+?ddply
+
+install.packages("plyr")
+
+library(plyr)
+
+city.attacks <- ddply(PreGTD, c("iyear", "region_txt", "city", "pop"), summarise, count(iyear))
+
+stargazer(city.attacks,digits=2, type="text", out="attacks.txt")
+
+city.attacks
+
+set.seed(1)
+count.attacks <- PreGTD(iyear = rep(1970:2013), count)
+print(city.attacks)
+
+PreGTD
+
+ddply(PreGTD, "city", transform, total.count=count(city))
+
+set.seed(1)
+d <- PreGTD(iyear = rep(1970:2013, each = 10), count)
+print(d)
 
 
+library(plyr)
+ddply(PreGTD, "iyear", sum(costal) {
+  mean.count <- mean(PreGTD$costal)
+})
+
+maxkills<-ddply(PreGTD, ~region_txt, summarize, maxvioperyr = max(HUMscale, na.rm = TRUE))
+
+maxkills <- sort(maxkills, decreasing=TRUE, na.last=NA)
+maxkills
